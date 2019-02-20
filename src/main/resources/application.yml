@@ -1,0 +1,15 @@
+#### Application Port설정
+server:
+  port: 9999
+  servlet:    context-path: /
+---
+#### Spring Boot Default Error Page
+server:  error:    whitelabel:      enabled: false
+---
+#### CharacterEncodingFilter
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
