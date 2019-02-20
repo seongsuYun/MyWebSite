@@ -34,11 +34,21 @@ public class SampleController {
 	private static final String CLIENT_ID = "smartrunner-bearworld-app3";
 	private static final String CLIENT_SECRET = "smartrunner-bearworld-app-secret";
 	
+	/**
+	 * 기본 HelloWorld 반환
+	 * @return
+	 */
 	@GetMapping("/greeting")
 	public ResponseEntity<String> greeting() {
 		return new ResponseEntity<String>("HelloWorld", HttpStatus.OK);
 	}
 	
+	/**
+	 * SSO서버에 로그인 시도
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	@GetMapping("/sso")
 	public String goSso(HttpServletRequest request) throws Exception {
 		log.info("============================[SSO 연결시도]============================");
@@ -57,6 +67,14 @@ public class SampleController {
 		return builder.toString();
 	}
 	
+	/**
+	 * SSO서버 로그인 성공 후 콜백
+	 * @param code
+	 * @param state
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	@GetMapping("/callback")
 	public ResponseEntity<String> callback(
 			@RequestParam("code") String code,
@@ -110,6 +128,11 @@ public class SampleController {
 		return result;
 	}
 	
+	/**
+	 * client_cridential 방식의 액세스토큰 조회
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		ResponseEntity<String> response = null;
 
