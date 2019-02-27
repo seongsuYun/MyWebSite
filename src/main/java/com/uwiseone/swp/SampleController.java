@@ -28,8 +28,8 @@ public class SampleController {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 	
-	private static final String AUTH_SERVER = "http://auth.uwiseone.net:8480";
-	private static final String API_SERVER = "http://api.uwiseone.net:8580";
+	private static final String AUTH_SERVER = "http://localhost:10443";
+	private static final String API_SERVER = "http://localhost:11443";
 	private static final String REDIRECT_URI = "http://my.website.co.kr:9999/callback";
 	private static final String CLIENT_ID = "smartrunner-bearworld-app3";
 	private static final String CLIENT_SECRET = "smartrunner-bearworld-app-secret";
@@ -155,7 +155,6 @@ public class SampleController {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode node = mapper.readTree(response.getBody());
 		String token = node.path("access_token").asText();
-
 		
 		// 호출된 토큰을 이용하여 도메인 상태 체크
 		String url = API_SERVER + "/admin/v1/domains/cloud.uwiseone.net/status";
@@ -163,6 +162,8 @@ public class SampleController {
 		// Use the access token for authentication
 		HttpHeaders headers2 = new HttpHeaders();
 		headers2.add("Authorization", "Bearer " + token);
+		headers2.add("partnerCode", "idstrust");
+		headers2.add("token", "$2a$10$gWYxpBeX30QwThOEW7nFv.rsJzx8UCqfOKU3yXf9xQ8.7.d8Ail0C");
 		HttpEntity<String> entity = new HttpEntity<>(headers2);
 
 		ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
