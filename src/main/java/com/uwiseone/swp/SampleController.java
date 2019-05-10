@@ -26,13 +26,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 public class SampleController {
 
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private static Logger log = LoggerFactory.getLogger(SampleController.class);
 	
 	private static final String AUTH_SERVER = "http://localhost:10443";
 	private static final String API_SERVER = "http://localhost:11443";
 	private static final String REDIRECT_URI = "http://my.website.co.kr:9999/callback";
 	private static final String CLIENT_ID = "smartrunner-bearworld-app3";
 	private static final String CLIENT_SECRET = "smartrunner-bearworld-app-secret";
+	private static final String PARTNER_CODE = "localhost";
 	
 	/**
 	 * 기본 HelloWorld 반환
@@ -60,7 +61,8 @@ public class SampleController {
 		builder.append(AUTH_SERVER + "/oauth/authorize");
 		builder.append("?response_type=code");
 		builder.append("&client_id=" + CLIENT_ID);
-		builder.append("&redirect_uri=" + REDIRECT_URI);
+		// redirect_uri는 db에 있는 정보를 이용한다.
+		//builder.append("&redirect_uri=" + REDIRECT_URI);
 		builder.append("&scope=read");
 		builder.append("&state=" + state);
 		
@@ -105,7 +107,9 @@ public class SampleController {
 		String access_token_url = AUTH_SERVER + "/oauth/token"
 								+ "?code=" + code
 								+ "&grant_type=authorization_code"
-								+ "&redirect_uri=" + REDIRECT_URI;
+								// redirect_uri정보는 디비를 이용함.
+								//+ "&redirect_uri=" + REDIRECT_URI
+								;
 
 		response = restTemplate.exchange(access_token_url, HttpMethod.POST, httpEntity, String.class);
 
@@ -121,6 +125,7 @@ public class SampleController {
 		// Use the access token for authentication
 		HttpHeaders headers2 = new HttpHeaders();
 		headers2.add("Authorization", "Bearer " + token);
+		headers2.add("partnerCode", PARTNER_CODE);
 		HttpEntity<String> entity = new HttpEntity<>(headers2);
 
 		ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
@@ -149,7 +154,7 @@ public class SampleController {
 		String access_token_url = AUTH_SERVER + "/oauth/token?grant_type=client_credentials";
 		response = restTemplate.exchange(access_token_url, HttpMethod.POST, httpEntity, String.class);
 
-		System.out.println("토큰호출 결과:\t" + response.getBody());
+		log.debug("token result : {}", response.getBody());
 
 		// Get the Access Token From the recieved JSON response
 		ObjectMapper mapper = new ObjectMapper();
@@ -167,7 +172,7 @@ public class SampleController {
 		HttpEntity<String> entity = new HttpEntity<>(headers2);
 
 		ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-		
-		System.out.println("도메인상태 호출 결과:\t" + result.getBody());
+
+		log.debug("result : {}", result.getBody());
 	}
 }
